@@ -640,8 +640,24 @@ void AMDGPUTargetMachine::registerDefaultAliasAnalyses(AAManager &AAM) {
   AAM.registerFunctionAnalysis<AMDGPUAA>();
 }
 
+static Expected<ScanOptions>
+parseAMDGPUAtomicOptimizerStrategy(StringRef Params) {
+  if (Params.empty())
+    return ScanOptions::Iterative;
+  Params.consume_front("strategy=");
+  auto Result = StringSwitch<std::optional<ScanOptions>>(Params)
+                    .Case("dpp", ScanOptions::DPP)
+                    .Cases("iterative", "", ScanOptions::Iterative)
+                    .Case("none", ScanOptions::None)
+                    .Default(std::nullopt);
+  if (Result)
+    return *Result;
+  return make_error<StringError>("invalid parameter", inconvertibleErrorCode());
+}
+
 void AMDGPUTargetMachine::registerPassBuilderCallbacks(
     PassBuilder &PB, bool PopulateClassToPassNames) {
+<<<<<<< HEAD
   PB.registerPipelineParsingCallback(
       [this](StringRef PassName, ModulePassManager &PM,
              ArrayRef<PassBuilder::PipelineElement>) {
@@ -737,18 +753,11 @@ void AMDGPUTargetMachine::registerPassBuilderCallbacks(
         }
         return false;
       });
+=======
+>>>>>>> a2dfc9ac7da23ccf0077081c8825a23aed1df0c0
 
-  PB.registerAnalysisRegistrationCallback([](FunctionAnalysisManager &FAM) {
-    FAM.registerPass([&] { return AMDGPUAA(); });
-  });
-
-  PB.registerParseAACallback([](StringRef AAName, AAManager &AAM) {
-    if (AAName == "amdgpu-aa") {
-      AAM.registerFunctionAnalysis<AMDGPUAA>();
-      return true;
-    }
-    return false;
-  });
+#define GET_PASS_REGISTRY "AMDGPUPassRegistry.def"
+#include "llvm/Passes/TargetPassRegistry.inc"
 
   PB.registerPipelineStartEPCallback(
       [](ModulePassManager &PM, OptimizationLevel Level) {
