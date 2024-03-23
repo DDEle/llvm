@@ -81,14 +81,14 @@ if(SYCL_PI_UR_USE_FETCH_CONTENT)
       CACHE PATH "Path to external '${name}' adapter source dir" FORCE)
   endfunction()
 
-set(UNIFIED_RUNTIME_REPO "https://github.com/oneapi-src/unified-runtime.git")
-  # commit 29ee45c4451a682f744146cc9dbeb2617ecdd6b3
-  # Merge: db4b0c14 4f5d005a
+  set(UNIFIED_RUNTIME_REPO "https://github.com/oneapi-src/unified-runtime.git")
+  # commit c98fdbcf1f43ce132fbae75336bda984e4ce2e78
+  # Merge: 5f4dd113 9b3cf9d3
   # Author: Kenneth Benzie (Benie) <k.benzie@codeplay.com>
-  # Date:   Mon Mar 18 12:14:26 2024 +0000
-  #     Merge pull request #1291 from JackAKirk/cuda-seq-cst-b
-  #     [CUDA] Report that devices with cc >= sm_70 support seq_cst
-  set(UNIFIED_RUNTIME_TAG 29ee45c4451a682f744146cc9dbeb2617ecdd6b3)
+  # Date:   Thu Mar 21 10:51:45 2024 +0000
+  #     Merge pull request #1439 from nrspruit/fix_device_native_proxy_buffer
+  #     [L0] Fix Native Host memory usage on device with copy back sync
+  set(UNIFIED_RUNTIME_TAG c98fdbcf1f43ce132fbae75336bda984e4ce2e78)
 
   if(SYCL_PI_UR_OVERRIDE_FETCH_CONTENT_REPO)
     set(UNIFIED_RUNTIME_REPO "${SYCL_PI_UR_OVERRIDE_FETCH_CONTENT_REPO}")
