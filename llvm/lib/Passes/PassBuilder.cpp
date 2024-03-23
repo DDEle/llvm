@@ -526,6 +526,26 @@ static std::optional<OptimizationLevel> parseOptLevel(StringRef S) {
       .Default(std::nullopt);
 }
 
+Expected<bool> PassBuilder::parseSinglePassOption(StringRef Params,
+                                                  StringRef OptionName,
+                                                  StringRef PassName) {
+  bool Result = false;
+  while (!Params.empty()) {
+    StringRef ParamName;
+    std::tie(ParamName, Params) = Params.split(';');
+
+    if (ParamName == OptionName) {
+      Result = true;
+    } else {
+      return make_error<StringError>(
+          formatv("invalid {1} pass parameter '{0}' ", ParamName, PassName)
+              .str(),
+          inconvertibleErrorCode());
+    }
+  }
+  return Result;
+}
+
 namespace {
 
 /// Parser of parameters for HardwareLoops  pass.
@@ -610,26 +630,6 @@ Expected<LoopUnrollOptions> parseLoopUnrollOptions(StringRef Params) {
     }
   }
   return UnrollOpts;
-}
-
-Expected<bool> PassBuilder::parseSinglePassOption(StringRef Params,
-                                                  StringRef OptionName,
-                                                  StringRef PassName) {
-  bool Result = false;
-  while (!Params.empty()) {
-    StringRef ParamName;
-    std::tie(ParamName, Params) = Params.split(';');
-
-    if (ParamName == OptionName) {
-      Result = true;
-    } else {
-      return make_error<StringError>(
-          formatv("invalid {1} pass parameter '{0}' ", ParamName, PassName)
-              .str(),
-          inconvertibleErrorCode());
-    }
-  }
-  return Result;
 }
 
 Expected<bool> parseGlobalDCEPassOptions(StringRef Params) {
